@@ -1,3 +1,8 @@
+/**
+ * Auth Service - User Authentication & Management
+ * Maintained by: Person 1 (Backend)
+ * Responsibilities: User registration, login, auth middleware
+ */
 'use strict';
 require('dotenv').config();
 const express = require('express');
