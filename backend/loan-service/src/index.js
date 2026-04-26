@@ -1,6 +1,6 @@
 /**
  * Loan Service - Catalog & Loan Management
- * Maintained by: Person 2 (Backend)
+ * Developed by: Rabah Messai
  * Responsibilities: Book catalog, loan operations, inventory
  */
 'use strict';
