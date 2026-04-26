@@ -1,3 +1,7 @@
+/**
+ * Loan Controller
+ * Handles book borrowing, returning, and loan management
+ */
 'use strict';
 const LoanService = require('../services/LoanService');
 

@@ -1,3 +1,7 @@
+/**
+ * Authentication Controller
+ * Handles user registration, login, logout, and token verification
+ */
 'use strict';
 const jwt      = require('jsonwebtoken');
 const bcrypt   = require('bcryptjs');
