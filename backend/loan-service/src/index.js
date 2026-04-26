@@ -1,3 +1,8 @@
+/**
+ * Loan Service - Catalog & Loan Management
+ * Maintained by: Person 2 (Backend)
+ * Responsibilities: Book catalog, loan operations, inventory
+ */
 'use strict';
 require('dotenv').config();
 const express = require('express');
