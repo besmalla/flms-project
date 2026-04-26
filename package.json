@@ -1,0 +1,15 @@
+{
+  "name": "flms",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start:auth":       "npm --prefix backend/auth-service start",
+    "start:loans":      "npm --prefix backend/loan-service start",
+    "start:auth-ui":    "npm --prefix frontend/auth-ui run dev",
+    "start:catalog-ui": "npm --prefix frontend/catalog-ui run dev",
+    "dev": "npx concurrently -n auth,loans,auth-ui,catalog-ui -c magenta,cyan,yellow,green \"npm run start:auth\" \"npm run start:loans\" \"npm run start:auth-ui\" \"npm run start:catalog-ui\""
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
