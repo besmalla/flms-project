@@ -1,7 +1,7 @@
 /**
  * Auth Service - User Authentication & Management
- * Maintained by: Person 1 (Backend)
- * Responsibilities: User registration, login, auth middleware
+ * Developed by: Rabah Messai
+ * Responsibilities: User registration, login, JWT auth middleware
  */
 'use strict';
 require('dotenv').config();
