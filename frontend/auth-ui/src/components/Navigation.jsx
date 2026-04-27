@@ -1,22 +1,8 @@
 import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { catalogService } from "../services/catalogService";
+import { authService } from "../services/authService";
 
-const AUTH_UI_URL = import.meta.env.VITE_AUTH_UI_URL || "http://localhost:5173";
-
-const ROLE_LABELS = {
-  student: "Student",
-  faculty: "Faculty",
-  librarian: "Librarian",
-  admin: "Admin",
-};
-
-const ROLE_COLORS = {
-  student: "bg-blue-100 text-blue-700",
-  faculty: "bg-emerald-100 text-emerald-700",
-  librarian: "bg-amber-100 text-amber-700",
-  admin: "bg-purple-100 text-purple-700",
-};
+const CATALOG_UI_URL = import.meta.env.VITE_CATALOG_UI_URL || "http://localhost:5174";
 
 const ROLE_AVATAR_BG = {
   student: "from-blue-500 to-indigo-600",
@@ -65,15 +51,16 @@ const mobileNavLinkClass = ({ isActive }) =>
   }`;
 
 export default function Navigation() {
-  const user = catalogService.getUser();
+  const navigate = useNavigate();
+  const user = authService.getUser();
   const [menuOpen, setMenuOpen] = useState(false);
 
   const close = () => setMenuOpen(false);
 
-  const handleLogout = () => {
-    localStorage.removeItem("flms_token");
-    localStorage.removeItem("flms_user");
-    window.location.href = `${AUTH_UI_URL}/login`;
+  const handleLogout = async () => {
+    try { await authService.logout(); } catch (_) {}
+    authService.clearAuth();
+    navigate("/login");
   };
 
   const initials = user
@@ -83,7 +70,7 @@ export default function Navigation() {
 
   return (
     <header className="bg-white/90 backdrop-blur-sm border-b border-gray-100 shadow-sm sticky top-0 z-30">
-      <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between gap-4">
+      <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between gap-4">
         {/* Logo */}
         <div className="flex items-center gap-2.5 shrink-0">
           <div className="w-8 h-8 rounded-lg bg-purple-600 flex items-center justify-center text-white shadow-sm">
@@ -97,33 +84,22 @@ export default function Navigation() {
           </div>
         </div>
 
-        {/* Desktop nav links */}
+        {/* Desktop nav */}
         <nav className="hidden sm:flex items-center gap-1">
-          <NavLink to="/catalog" className={navLinkClass}>Catalog</NavLink>
-          <NavLink to="/my-loans" className={navLinkClass}>My Loans</NavLink>
+          <NavLink to="/profile" className={navLinkClass}>Profile</NavLink>
+          {user?.role === "admin" && (
+            <NavLink to="/admin" className={navLinkClass}>Admin</NavLink>
+          )}
           <a
-            href={`${AUTH_UI_URL}/profile`}
+            href={CATALOG_UI_URL}
             className="px-3 py-1.5 rounded-lg text-sm font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-50 transition-colors duration-150"
           >
-            Profile
+            Catalog
           </a>
-          {user?.role === "admin" && (
-            <a
-              href={`${AUTH_UI_URL}/admin`}
-              className="px-3 py-1.5 rounded-lg text-sm font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-50 transition-colors duration-150"
-            >
-              Admin
-            </a>
-          )}
         </nav>
 
         {/* Desktop user area */}
         <div className="hidden sm:flex items-center gap-3 shrink-0">
-          {user?.role && (
-            <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${ROLE_COLORS[user.role] || "bg-gray-100 text-gray-600"}`}>
-              {ROLE_LABELS[user.role] || user.role}
-            </span>
-          )}
           <div
             className={`w-8 h-8 rounded-full bg-gradient-to-br ${avatarGrad} flex items-center justify-center text-white text-xs font-bold shadow-sm`}
           >
@@ -134,7 +110,7 @@ export default function Navigation() {
           </span>
           <button
             onClick={handleLogout}
-            className="text-sm font-medium text-gray-400 hover:text-red-500 transition-colors duration-150 ml-1"
+            className="text-sm font-medium text-gray-400 hover:text-red-500 transition-colors ml-1"
           >
             Sign out
           </button>
@@ -160,30 +136,21 @@ export default function Navigation() {
             </div>
             <div>
               <p className="text-sm font-semibold text-slate-800">{user?.first_name} {user?.last_name}</p>
-              <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${ROLE_COLORS[user?.role] || "bg-gray-100 text-gray-600"}`}>
-                {ROLE_LABELS[user?.role] || user?.role}
-              </span>
+              <p className="text-xs text-gray-400">{user?.email}</p>
             </div>
           </div>
           <div className="border-t border-gray-100 pt-2 space-y-1">
-            <NavLink to="/catalog" className={mobileNavLinkClass} onClick={close}>Catalog</NavLink>
-            <NavLink to="/my-loans" className={mobileNavLinkClass} onClick={close}>My Loans</NavLink>
+            <NavLink to="/profile" className={mobileNavLinkClass} onClick={close}>Profile</NavLink>
+            {user?.role === "admin" && (
+              <NavLink to="/admin" className={mobileNavLinkClass} onClick={close}>Admin</NavLink>
+            )}
             <a
-              href={`${AUTH_UI_URL}/profile`}
+              href={CATALOG_UI_URL}
               className="block px-3 py-2.5 rounded-xl text-sm font-semibold text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors"
               onClick={close}
             >
-              Profile
+              Browse Catalog
             </a>
-            {user?.role === "admin" && (
-              <a
-                href={`${AUTH_UI_URL}/admin`}
-                className="block px-3 py-2.5 rounded-xl text-sm font-semibold text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors"
-                onClick={close}
-              >
-                Admin Panel
-              </a>
-            )}
           </div>
           <div className="border-t border-gray-100 pt-2">
             <button

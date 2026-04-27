@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { authService } from "../services/authService";
+import Navigation from "../components/Navigation";
 
 const ROLE_LABELS = {
   student: "Student",
@@ -27,18 +28,6 @@ const DEPARTMENTS = [
   "Arts & Humanities", "Social Sciences", "Administration", "Other",
 ];
 
-const CATALOG_URL = import.meta.env.VITE_API_LOAN_URL
-  ? import.meta.env.VITE_API_LOAN_URL.replace(":3002", ":5174")
-  : "http://localhost:5174";
-
-function BookIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" aria-hidden="true">
-      <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-      <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
-  );
-}
 
 export default function ProfilePage() {
   const navigate = useNavigate();
@@ -108,12 +97,6 @@ export default function ProfilePage() {
     }
   };
 
-  const handleLogout = async () => {
-    try { await authService.logout(); } catch (_) {}
-    authService.clearAuth();
-    navigate("/login");
-  };
-
   if (fetching) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-purple-50 via-slate-50 to-indigo-50 flex items-center justify-center">
@@ -133,42 +116,7 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-slate-50 to-indigo-50">
-      {/* Header */}
-      <header className="bg-white/90 backdrop-blur-sm border-b border-gray-100 shadow-sm sticky top-0 z-30">
-        <div className="max-w-3xl mx-auto px-4 h-16 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-purple-600 flex items-center justify-center text-white shadow-sm">
-              <BookIcon />
-            </div>
-            <div className="leading-tight">
-              <div className="text-sm font-bold text-slate-900">Faculty Library</div>
-              <div className="text-[10px] font-medium text-gray-400 uppercase tracking-widest hidden sm:block">My Account</div>
-            </div>
-          </div>
-          <div className="flex items-center gap-3">
-            <a
-              href={CATALOG_URL}
-              className="text-sm font-medium text-purple-600 hover:text-purple-700 transition-colors hidden sm:block"
-            >
-              Browse catalog
-            </a>
-            {user?.role === "admin" && (
-              <button
-                onClick={() => navigate("/admin")}
-                className="text-sm font-medium text-purple-600 hover:text-purple-700 transition-colors"
-              >
-                Admin panel
-              </button>
-            )}
-            <button
-              onClick={handleLogout}
-              className="text-sm font-medium text-gray-400 hover:text-red-500 transition-colors ml-1"
-            >
-              Sign out
-            </button>
-          </div>
-        </div>
-      </header>
+      <Navigation />
 
       <main className="max-w-3xl mx-auto px-4 py-8">
         {/* User card */}

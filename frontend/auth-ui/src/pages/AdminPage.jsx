@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
 import { authService } from "../services/authService";
+import Navigation from "../components/Navigation";
 
 const ROLES = ["student", "faculty", "librarian", "admin"];
 
@@ -10,17 +10,6 @@ const ROLE_COLORS = {
   librarian: "bg-amber-50 text-amber-700 border-amber-200",
   admin: "bg-purple-50 text-purple-700 border-purple-200",
 };
-
-function UsersIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" aria-hidden="true">
-      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-      <circle cx="9" cy="7" r="4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-      <path d="M23 21v-2a4 4 0 0 0-3-3.87" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-      <path d="M16 3.13a4 4 0 0 1 0 7.75" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
-  );
-}
 
 function SearchIcon() {
   return (
@@ -32,7 +21,6 @@ function SearchIcon() {
 }
 
 export default function AdminPage() {
-  const navigate = useNavigate();
   const currentUser = authService.getUser();
   const [users, setUsers] = useState([]);
   const [pagination, setPagination] = useState({ page: 1, pages: 1, total: 0 });
@@ -83,34 +71,7 @@ export default function AdminPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-slate-50 to-indigo-50">
-      {/* Header */}
-      <header className="bg-white/90 backdrop-blur-sm border-b border-gray-100 shadow-sm sticky top-0 z-30">
-        <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => navigate("/profile")}
-              className="w-8 h-8 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 transition-colors"
-              aria-label="Back to profile"
-            >
-              <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4">
-                <path d="m15 18-6-6 6-6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </button>
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-purple-600 flex items-center justify-center text-white shadow-sm">
-                <UsersIcon />
-              </div>
-              <div>
-                <div className="text-sm font-bold text-slate-900">User Management</div>
-                <div className="text-[10px] font-medium text-gray-400 uppercase tracking-widest">Admin Panel</div>
-              </div>
-            </div>
-          </div>
-          <div className="text-xs text-gray-400 hidden sm:block">
-            Signed in as <span className="font-semibold text-gray-600">{currentUser?.first_name} {currentUser?.last_name}</span>
-          </div>
-        </div>
-      </header>
+      <Navigation />
 
       <main className="max-w-7xl mx-auto px-4 py-8">
         {/* Stats row */}
