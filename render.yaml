@@ -1,0 +1,46 @@
+databases:
+  - name: flms-db
+    plan: free
+    databaseName: flms_db
+    user: flms_user
+
+services:
+  - type: web
+    name: flms-auth-service
+    env: node
+    rootDir: backend/auth-service
+    buildCommand: npm install
+    startCommand: node src/index.js
+    plan: free
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: flms-db
+          property: connectionString
+      - key: JWT_SECRET
+        sync: false
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3001
+
+  - type: web
+    name: flms-loan-service
+    env: node
+    rootDir: backend/loan-service
+    buildCommand: npm install
+    startCommand: node src/index.js
+    plan: free
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: flms-db
+          property: connectionString
+      - key: JWT_SECRET
+        sync: false
+      - key: AUTH_SERVICE_URL
+        sync: false
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3002
