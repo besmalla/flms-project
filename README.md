@@ -4,7 +4,7 @@ A full-stack library management system for academic institutions.
 
 ## Demo
 
-<video src="flms.mov" controls width="100%"></video>
+[▶ Watch Demo Video](https://drive.google.com/file/d/1eVYS46z0yCjdojGLSJ3NaM1cLMp2ZQHX/view?usp=sharing)
 
 ## User Roles
 
