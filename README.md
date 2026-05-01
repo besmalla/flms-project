@@ -2,6 +2,10 @@
 
 A full-stack library management system for academic institutions.
 
+## Demo
+
+<video src="flms.mov" controls width="100%"></video>
+
 ## User Roles
 
 | Role          | Description                     | Permissions                                                      |
