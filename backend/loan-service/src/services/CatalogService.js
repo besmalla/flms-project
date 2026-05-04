@@ -10,12 +10,12 @@ class CatalogService {
 
     if (q) {
       conds.push(`(title ILIKE $${i} OR author ILIKE $${i} OR isbn ILIKE $${i})`);
-      params.push(`%${q}%`);
+      params.push(`%${q.trim()}%`); // ✅ trim input
       i++;
     }
     if (category) {
       conds.push(`category ILIKE $${i++}`);
-      params.push(`%${category}%`);
+      params.push(`%${category.trim()}%`); // ✅ trim input
     }
     if (yearMin) {
       conds.push(`year >= $${i++}`);
@@ -41,7 +41,7 @@ class CatalogService {
 
     return {
       data: dataRes.rows,
-      pagination: { page, limit, total, pages: Math.ceil(total / limit) },
+      pagination: { page, limit, total, pages: Math.ceil(total / limit) || 1 }, // ✅ fix edge case
     };
   }
 
@@ -65,7 +65,14 @@ class CatalogService {
       `INSERT INTO books (title, author, isbn, category, year, total_copies, available_copies)
        VALUES ($1, $2, $3, $4, $5, $6, $6)
        RETURNING *`,
-      [title.trim(), author.trim(), isbn || null, category || null, year || null, copies]
+      [
+        title.trim(),
+        author.trim(),
+        isbn ? isbn.trim() : null,        // ✅ sanitize
+        category ? category.trim() : null, // ✅ sanitize
+        year || null,
+        copies
+      ]
     );
     return result.rows[0];
   }
@@ -78,7 +85,6 @@ class CatalogService {
       throw err;
     }
 
-    // Recalculate available_copies when total changes
     let available = book.available_copies;
     if (totalCopies !== undefined) {
       const newTotal = Math.max(0, parseInt(totalCopies, 10));
@@ -101,8 +107,8 @@ class CatalogService {
       [
         title    ? title.trim()    : null,
         author   ? author.trim()   : null,
-        isbn     !== undefined     ? isbn || null : null,
-        category !== undefined     ? category || null : null,
+        isbn     !== undefined     ? (isbn ? isbn.trim() : null) : null, // ✅ sanitize
+        category !== undefined     ? (category ? category.trim() : null) : null, // ✅ sanitize
         year     !== undefined     ? year || null : null,
         totalCopies !== undefined  ? Math.max(0, parseInt(totalCopies, 10)) : null,
         available,
@@ -113,7 +119,6 @@ class CatalogService {
   }
 
   static async softDeleteBook(bookId) {
-    // Refuse if there are active loans
     const activeLoans = await query(
       `SELECT COUNT(*) FROM loans WHERE book_id = $1 AND status = 'active'`,
       [bookId]
@@ -138,7 +143,6 @@ class CatalogService {
       throw err;
     }
 
-    // Validate all before inserting (all-or-nothing)
     for (const [idx, b] of books.entries()) {
       if (!b.title || !b.author) {
         const err = new Error(`books[${idx}]: title and author are required`);
@@ -154,7 +158,14 @@ class CatalogService {
         `INSERT INTO books (title, author, isbn, category, year, total_copies, available_copies)
          VALUES ($1, $2, $3, $4, $5, $6, $6)
          RETURNING *`,
-        [b.title.trim(), b.author.trim(), b.isbn || null, b.category || null, b.year || null, copies]
+        [
+          b.title.trim(),
+          b.author.trim(),
+          b.isbn ? b.isbn.trim() : null, // ✅ sanitize
+          b.category ? b.category.trim() : null, // ✅ sanitize
+          b.year || null,
+          copies
+        ]
       );
       inserted.push(result.rows[0]);
     }
